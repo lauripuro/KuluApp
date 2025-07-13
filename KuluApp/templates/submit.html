@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Submit New Expense</h2>
+<form action="/submit" method="post">
+    <label>Amount:</label>
+    <input type="number" step="0.01" name="amount" required><br>
+
+    <label>Category:</label>
+    <select name="category">
+        <option>Ruokakauppa</option>
+        <option>Humputtelu</option>
+        <option>Ravintola</option>
+    </select><br>
+
+    <label>Payer:</label>
+    <select name="payer">
+        <option>Siiri</option>
+        <option>Lauri</option>
+    </select><br>
+
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
