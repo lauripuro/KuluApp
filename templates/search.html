@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Search Expenses</h2>
+<form method="post">
+    <label>Date:</label>
+    <input type="date" name="date">
+
+    <label>Payer:</label>
+    <select name="payer">
+        <option value="">-- Any --</option>
+        <option>Siiri</option>
+        <option>Lauri</option>
+    </select>
+
+    <label>Category:</label>
+    <select name="category">
+        <option value="">-- Any --</option>
+        <option>Ruokakauppa</option>
+        <option>Humputtelu</option>
+        <option>Ravintola</option>
+    </select>
+
+    <input type="submit" value="Search">
+</form>
+
+<table border="1">
+    <tr><th>ID</th><th>Date</th><th>Payer</th><th>Category</th><th>Amount</th><th>Action</th></tr>
+    {% for row in results %}
+    <tr>
+        <form action="/edit/{{ row[0] }}" method="post">
+            <td>{{ row[0] }}</td>
+            <td><input type="date" name="date" value="{{ row[4] }}"></td>
+            <td>
+                <select name="payer">
+                    <option {% if row[1] == 'Siiri' %}selected{% endif %}>Siiri</option>
+                    <option {% if row[1] == 'Lauri' %}selected{% endif %}>Lauri</option>
+                </select>
+            </td>
+            <td>
+                <select name="category">
+                    <option {% if row[3] == 'Ruokakauppa' %}selected{% endif %}>Ruokakauppa</option>
+                    <option {% if row[3] == 'Humputtelu' %}selected{% endif %}>Humputtelu</option>
+                    <option {% if row[3] == 'Ravintola' %}selected{% endif %}>Ravintola</option>
+                </select>
+            </td>
+            <td><input type="number" step="0.01" name="amount" value="{{ row[2] }}"></td>
+            <td><input type="submit" value="Edit"></td>
+        </form>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
