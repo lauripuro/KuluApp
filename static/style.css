@@ -4,3 +4,7 @@ body {
     max-width: 600px;
     margin: auto;
 }
+
+.wide-select {
+    min-width: 140px;
+}
