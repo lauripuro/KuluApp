@@ -28,6 +28,7 @@ init_db()
 def index():
     return render_template('submit.html')
 
+
 @app.route('/submit', methods=['POST'])
 def submit():
     payer = request.form['payer']
@@ -51,14 +52,21 @@ def search():
     query = "SELECT * FROM expenses WHERE 1=1"
     params = []
 
-    if request.method == 'POST':
-        date = request.form['date']
-        payer = request.form['payer']
-        category = request.form['category']
+    # Default empty values
+    start_date = end_date = payer = category = ''
 
-        if date:
-            query += " AND date = ?"
-            params.append(date)
+    if request.method == 'POST':
+        start_date = request.form.get('start_date', '')
+        end_date = request.form.get('end_date', '')
+        payer = request.form.get('payer', '')
+        category = request.form.get('category', '')
+
+        if start_date:
+            query += " AND date >= ?"
+            params.append(start_date)
+        if end_date:
+            query += " AND date <= ?"
+            params.append(end_date)
         if payer:
             query += " AND payer = ?"
             params.append(payer)
@@ -66,13 +74,37 @@ def search():
             query += " AND category = ?"
             params.append(category)
 
-    # Add sorting and limit
     query += " ORDER BY date DESC, id DESC LIMIT 20"
-
     c.execute(query, params)
     results = c.fetchall()
+
+    # Filtered total
+    total_amount = sum(row[2] for row in results)
+
+    # Unfiltered for balance
+    c.execute("SELECT payer, amount FROM expenses")
+    all_data = c.fetchall()
     conn.close()
-    return render_template('search.html', results=results)
+
+    siiri_sum = sum(row[1] for row in all_data if row[0] == 'Siiri')
+    lauri_sum = sum(row[1] for row in all_data if row[0] == 'Lauri')
+    half = (siiri_sum + lauri_sum) / 2
+    balance = round(half - siiri_sum, 2)
+
+    return render_template(
+        'search.html',
+        results=results,
+        total_amount=total_amount,
+        siiri_sum=siiri_sum,
+        lauri_sum=lauri_sum,
+        balance=balance,
+        start_date=start_date,
+        end_date=end_date,
+        payer=payer,
+        category=category
+    )
+
+
 
 @app.route('/edit/<int:id>', methods=['POST'])
 def edit(id):
