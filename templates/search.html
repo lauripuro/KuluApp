@@ -63,13 +63,13 @@
                     <td class="text-center">{{ row[0] }}</td>
                     <td><input type="date" name="date" value="{{ row[4] }}" class="form-control form-control-sm"></td>
                     <td>
-                        <select name="payer" class="form-select form-select-sm">
+                        <select name="payer" class="form-select form-select-sm wide-select">
                             <option {% if row[1] == 'Siiri' %}selected{% endif %}>Siiri</option>
                             <option {% if row[1] == 'Lauri' %}selected{% endif %}>Lauri</option>
                         </select>
                     </td>
                     <td>
-                        <select name="category" class="form-select form-select-sm">
+                        <select name="category" class="form-select form-select-sm wide-select">
                             <option {% if row[3] == 'Ruokakauppa' %}selected{% endif %}>Ruokakauppa</option>
                             <option {% if row[3] == 'Humputtelu' %}selected{% endif %}>Humputtelu</option>
                             <option {% if row[3] == 'Ravintola' %}selected{% endif %}>Ravintola</option>
