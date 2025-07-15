@@ -1,16 +1,21 @@
 from flask import Flask, request, render_template, redirect
 from datetime import datetime
-import sqlite3
+import psycopg2
+import os
 
 app = Flask(__name__)
 
+# Connect to PostgreSQL using env variable
+def get_db_connection():
+    return psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+
 # Initialize database
 def init_db():
-    conn = sqlite3.connect('expenses.db')
-    c = conn.cursor()
-    c.execute('''
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('''
         CREATE TABLE IF NOT EXISTS expenses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             payer TEXT NOT NULL,
             amount REAL NOT NULL,
             category TEXT NOT NULL,
@@ -18,17 +23,17 @@ def init_db():
         )
     ''')
     conn.commit()
+    cur.close()
     conn.close()
 
 init_db()
 
-# Routes
-
+# Home (Submit form)
 @app.route('/')
 def index():
     return render_template('submit.html')
 
-
+# Submit expense
 @app.route('/submit', methods=['POST'])
 def submit():
     payer = request.form['payer']
@@ -36,60 +41,73 @@ def submit():
     category = request.form['category']
     date = datetime.now().strftime('%Y-%m-%d')
 
-    conn = sqlite3.connect('expenses.db')
-    c = conn.cursor()
-    c.execute('INSERT INTO expenses (payer, amount, category, date) VALUES (?, ?, ?, ?)',
-              (payer, amount, category, date))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        INSERT INTO expenses (payer, amount, category, date)
+        VALUES (%s, %s, %s, %s)
+    ''', (payer, amount, category, date))
     conn.commit()
+    cur.close()
     conn.close()
     return redirect('/')
 
+# Search & filter
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    conn = sqlite3.connect('expenses.db')
-    c = conn.cursor()
+    conn = get_db_connection()
+    cur = conn.cursor()
 
     query = "SELECT * FROM expenses WHERE 1=1"
     params = []
 
-    # Default empty values
-    start_date = end_date = payer = category = ''
+    # Defaults for form fields
+    date = ''
+    start_date = ''
+    end_date = ''
+    payer = ''
+    category = ''
 
     if request.method == 'POST':
+        date = request.form.get('date', '')
         start_date = request.form.get('start_date', '')
         end_date = request.form.get('end_date', '')
         payer = request.form.get('payer', '')
         category = request.form.get('category', '')
 
+        if date:
+            query += " AND date = %s"
+            params.append(date)
         if start_date:
-            query += " AND date >= ?"
+            query += " AND date >= %s"
             params.append(start_date)
         if end_date:
-            query += " AND date <= ?"
+            query += " AND date <= %s"
             params.append(end_date)
         if payer:
-            query += " AND payer = ?"
+            query += " AND payer = %s"
             params.append(payer)
         if category:
-            query += " AND category = ?"
+            query += " AND category = %s"
             params.append(category)
 
-    query += " ORDER BY date DESC, id DESC LIMIT 20"
-    c.execute(query, params)
-    results = c.fetchall()
+    query += " ORDER BY date DESC LIMIT 20"
 
-    # Filtered total
+    cur.execute(query, params)
+    results = cur.fetchall()
+
+    # Shared expenses overview
+    cur.execute("SELECT SUM(amount) FROM expenses WHERE payer = 'Siiri'")
+    siiri_sum = cur.fetchone()[0] or 0
+    cur.execute("SELECT SUM(amount) FROM expenses WHERE payer = 'Lauri'")
+    lauri_sum = cur.fetchone()[0] or 0
+    balance = siiri_sum - lauri_sum
+
+    # Total filtered amount
     total_amount = sum(row[2] for row in results)
 
-    # Unfiltered for balance
-    c.execute("SELECT payer, amount FROM expenses")
-    all_data = c.fetchall()
+    cur.close()
     conn.close()
-
-    siiri_sum = sum(row[1] for row in all_data if row[0] == 'Siiri')
-    lauri_sum = sum(row[1] for row in all_data if row[0] == 'Lauri')
-    half = (siiri_sum + lauri_sum) / 2
-    balance = round(half - siiri_sum, 2)
 
     return render_template(
         'search.html',
@@ -98,27 +116,30 @@ def search():
         siiri_sum=siiri_sum,
         lauri_sum=lauri_sum,
         balance=balance,
+        date=date,
         start_date=start_date,
         end_date=end_date,
         payer=payer,
         category=category
     )
 
-
-
+# Edit a row
 @app.route('/edit/<int:id>', methods=['POST'])
 def edit(id):
     date = request.form['date']
     payer = request.form['payer']
     category = request.form['category']
-    amount = request.form['amount']
+    amount = float(request.form['amount'])
 
-    conn = sqlite3.connect('expenses.db')
-    c = conn.cursor()
-    c.execute('''
-        UPDATE expenses SET date = ?, payer = ?, category = ?, amount = ? WHERE id = ?
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        UPDATE expenses
+        SET date = %s, payer = %s, category = %s, amount = %s
+        WHERE id = %s
     ''', (date, payer, category, amount, id))
     conn.commit()
+    cur.close()
     conn.close()
     return redirect('/search')
 
