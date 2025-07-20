@@ -1,13 +1,16 @@
 from flask import Flask, request, render_template, redirect
 from datetime import datetime
-import psycopg2
+import psycopg
 import os
 
 app = Flask(__name__)
 
 # Connect to PostgreSQL using env variable
 def get_db_connection():
-    return psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+        raise RuntimeError("DATABASE_URL environment variable not set")
+    return psycopg.connect(database_url, sslmode='require')
 
 # Initialize database
 def init_db():
@@ -144,4 +147,4 @@ def edit(id):
     return redirect('/search')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
