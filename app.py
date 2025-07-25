@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, redirect
 from datetime import datetime
-import psycopg
+import psycopg2
 import os
 
 app = Flask(__name__)
@@ -10,7 +10,7 @@ def get_db_connection():
     database_url = os.environ.get('DATABASE_URL')
     if not database_url:
         raise RuntimeError("DATABASE_URL environment variable not set")
-    return psycopg.connect(database_url, sslmode='require')
+    return psycopg2.connect(database_url, sslmode='require')
 
 # Initialize database
 def init_db():
