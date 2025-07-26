@@ -2,7 +2,7 @@
 {% block content %}
 <form method="post" class="form-row g-3 mb-3">
     <!-- Combined Start and End Date fields -->
-    <div class="form-group col-12 col-md-6"> <!-- Takes full width on mobile, half on medium+ -->
+    <div class="form-group col-12 col-md-4"> <!-- Takes full width on mobile, half on medium+ -->
         <label for="start_date" class="form-label visually-hidden">Start Date:</label>
         <label for="end_date" class="form-label visually-hidden">End Date:</label>
         <div class="d-flex date-range-input"> <!-- Flex container for the two inputs -->
@@ -11,14 +11,14 @@
         </div>
     </div>
 
-    <div class="form-group col-md-2">
+    <div class="form-group col-md-4">
         <select name="payer" class="form-control">
             <option value="" disabled selected>Select Payer</option>
             <option value="Siiri" {% if payer == 'Siiri' %}selected{% endif %}>Siiri</option>
             <option value="Lauri" {% if payer == 'Lauri' %}selected{% endif %}>Lauri</option>
         </select>
     </div>
-    <div class="form-group col-md-2">
+    <div class="form-group col-md-4">
         <select name="category" class="form-control">
             <option value="" disabled selected>Select Category</option>
             <option value="Ruokakauppa" {% if category == 'Ruokakauppa' %}selected{% endif %}>Ruokakauppa</option>
@@ -27,11 +27,11 @@
         </select>
     </div>
 
-    <div class="form-group col-md-1 align-self-end">
+    <div class="form-group col-md-4 align-self-end">
         <button type="submit" class="btn btn-primary w-100">Search</button>
     </div>
 
-    <div class="form-group col-md-1 align-self-end">
+    <div class="form-group col-md-4 align-self-end">
         <a href="/search" class="btn btn-secondary w-100">Clear</a>
     </div>
 </form>
