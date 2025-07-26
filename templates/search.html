@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-<form method="post" class="form-row g-3 mb-3">
-    <!-- Combined Start and End Date fields -->
-    <div class="form-group col-12 col-md-4"> <!-- Takes full width on mobile, half on medium+ -->
-        <label for="start_date" class="form-label visually-hidden">Start Date:</label>
+<form method="post" class="row g-3 mb-3"> <div class="form-group col-12 col-md-4"> <label for="start_date" class="form-label visually-hidden">Start Date:</label>
         <label for="end_date" class="form-label visually-hidden">End Date:</label>
-        <div class="d-flex date-range-input"> <!-- Flex container for the two inputs -->
-            <input type="date" name="start_date" id="start_date" class="form-control flex-fill start-date-input" placeholder="Start Date" value="{{ start_date }}">
+        <div class="d-flex date-range-input"> <input type="date" name="start_date" id="start_date" class="form-control flex-fill start-date-input" placeholder="Start Date" value="{{ start_date }}">
             <input type="date" name="end_date" id="end_date" class="form-control flex-fill end-date-input" placeholder="End Date" value="{{ end_date }}">
         </div>
     </div>
@@ -36,12 +32,9 @@
     </div>
 </form>
 
-
-
 <div class="mb-3 fs-4 fw-bold">
     Total: {{ "{:,.2f}".format(total_amount).replace(",", "X").replace(".", ",").replace("X", ".") }} €
 </div>
-
 
 <div class="table-responsive">
     <table class="table table-bordered table-striped align-middle small">
@@ -82,7 +75,6 @@
         </tbody>
     </table>
 </div>
-
 
 <div class="mt-4 p-3 border bg-light rounded">
     <h5>Shared Expenses Overview</h5>
