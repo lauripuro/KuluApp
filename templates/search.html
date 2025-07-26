@@ -92,9 +92,9 @@
         <strong>Lauri paid:</strong> {{ "{:,.2f}".format(lauri_sum).replace(",", "X").replace(".", ",").replace("X", ".") }} €
     </p>
     {% if balance > 0 %}
-        Siiri owes {{ "{:,.2f}".format(balance).replace(",", "X").replace(".", ",").replace("X", ".") }} € to Lauri
+        Lauri owes {{ "{:,.2f}".format(balance / 2).replace(",", "X").replace(".", ",").replace("X", ".") }} € to Siiri
     {% elif balance < 0 %}
-        Lauri owes {{ "{:,.2f}".format(-balance).replace(",", "X").replace(".", ",").replace("X", ".") }} € to Siiri
+        Siiri owes {{ "{:,.2f}".format(-balance / 2).replace(",", "X").replace(".", ",").replace("X", ".") }} € to Lauri
     {% else %}
         Expenses are equalized
     {% endif %}
