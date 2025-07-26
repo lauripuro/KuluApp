@@ -4,15 +4,14 @@
 
     <!-- Amount -->
     <div class="col-md-4">
-        <label for="amount" class="form-label">Amount:</label>
-        <input type="number" step="0.01" name="amount" id="amount" class="form-control" required>
+        <input type="number" step="0.01" name="amount" id="amount" class="form-control" placeholder="Submit Amount" required>
     </div>
 
     <!-- Category -->
     <div class="col-md-4">
         <label for="category" class="form-label">Category:</label>
         <select name="category" id="category" class="form-select" required>
-            <option value="" disabled selected>-- Select Category --</option>
+            <option value="" disabled selected>Select Category</option>
             <option value="Ruokakauppa">Ruokakauppa</option>
             <option value="Humputtelu">Humputtelu</option>
             <option value="Ravintola">Ravintola</option>
@@ -21,7 +20,6 @@
 
     <!-- Payer -->
     <div class="col-md-4">
-        <label class="form-label d-block">Payer:</label>
         <div class="btn-group w-100" role="group" aria-label="Payer selection">
             <input type="radio" class="btn-check" name="payer" id="payerSiiri" value="Siiri" required>
             <label class="btn btn-outline-primary rounded-start" for="payerSiiri">Siiri</label>
