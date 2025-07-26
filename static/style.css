@@ -8,3 +8,39 @@ body {
 .wide-select {
     min-width: 140px;
 }
+
+/* Styles for the combined date range input */
+.date-range-input {
+    border: 1px solid #ced4da; /* Standard Bootstrap input border color */
+    border-radius: 0.375rem; /* Standard Bootstrap input border-radius */
+    overflow: hidden; /* Ensures borders are contained */
+}
+
+.date-range-input input.form-control {
+    border: none; /* Remove individual input borders */
+    border-radius: 0; /* Remove individual input border-radius */
+    padding: 0.375rem 0.75rem; /* Standard Bootstrap input padding */
+    height: calc(1.5em + 0.75rem + 2px); /* Standard Bootstrap input height */
+    box-shadow: none; /* Remove any default focus shadow */
+}
+
+.date-range-input input.form-control:focus {
+    outline: none; /* Remove outline on focus */
+    box-shadow: none; /* Ensure no box-shadow on focus */
+}
+
+/* Add a visual separator between the two date inputs */
+.date-range-input .start-date-input {
+    border-right: 1px solid #ced4da; /* Add a right border to the first input */
+}
+
+/* Adjust border-radius for the combined look */
+.date-range-input .start-date-input {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.date-range-input .end-date-input {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
